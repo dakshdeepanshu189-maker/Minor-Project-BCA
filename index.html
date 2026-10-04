@@ -1,0 +1,827 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>MediCare Reminder · Smart Medicine & Health Record Management</title>
+  <meta name="description" content="Personalized client-side medicine reminder, adherence tracking, prescription, and medical record management app." />
+  
+  <!-- Font Awesome 6 (Free) -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
+  
+  <!-- Custom Application Stylesheet -->
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+<!-- Backdrop for mobile drawer -->
+<div id="sidebar-backdrop" class="sidebar-backdrop" aria-hidden="true"></div>
+
+<!-- Mobile Navigation Header -->
+<header class="mobile-nav-header">
+  <div class="sidebar-logo" style="padding:0; margin:0; border:none; font-size:1.3rem;">
+    <i class="fas fa-pills"></i>
+    <span>MediCare</span>
+  </div>
+  <button id="btn-mobile-menu-toggle" class="mobile-menu-toggle" aria-label="Toggle navigation menu">
+    <i class="fas fa-bars"></i>
+  </button>
+</header>
+
+<div class="app">
+  <!-- SIDEBAR NAVIGATION -->
+  <aside class="sidebar" id="app-sidebar" aria-label="Main Navigation">
+    <div class="sidebar-logo" data-view="view-dashboard">
+      <i class="fas fa-pills"></i>
+      <span>MediCare</span>
+    </div>
+    
+    <button class="nav-item active" data-view="view-dashboard" aria-label="Dashboard">
+      <i class="fas fa-th-large"></i> <span>Dashboard</span>
+    </button>
+    <button class="nav-item" data-view="view-medicines" aria-label="My Medicines">
+      <i class="fas fa-capsules"></i> <span>My Medicines</span>
+    </button>
+    <button class="nav-item" data-view="view-reminders" aria-label="Reminders">
+      <i class="fas fa-bell"></i> <span>Reminders</span>
+    </button>
+    <button class="nav-item" data-view="view-records" aria-label="Medical Records">
+      <i class="fas fa-notes-medical"></i> <span>Medical Records</span>
+    </button>
+    <button class="nav-item" data-view="view-prescriptions" aria-label="Prescriptions">
+      <i class="fas fa-prescription"></i> <span>Prescriptions</span>
+    </button>
+    <button class="nav-item" data-view="view-reports" aria-label="Reports">
+      <i class="fas fa-chart-line"></i> <span>Reports</span>
+    </button>
+    <button class="nav-item" data-view="view-profile" aria-label="Profile">
+      <i class="fas fa-user-circle"></i> <span>Profile</span>
+    </button>
+    <button class="nav-item" data-view="view-settings" aria-label="Settings">
+      <i class="fas fa-cog"></i> <span>Settings</span>
+    </button>
+    
+    <div class="logout-container">
+      <button class="nav-item logout-btn" id="btn-sidebar-logout" aria-label="Logout">
+        <i class="fas fa-sign-out-alt"></i> <span>Logout</span>
+      </button>
+    </div>
+  </aside>
+
+  <!-- MAIN APPLICATION CONTENT -->
+  <main class="main" id="main-content">
+    
+    <!-- ========================================== -->
+    <!-- SECTION 1: DASHBOARD (Default Active View) -->
+    <!-- ========================================== -->
+    <section id="view-dashboard" class="view-section active">
+      <!-- Hero Banner -->
+      <div class="hero">
+        <div>
+          <h1>Never Miss Your Medicine Again</h1>
+          <p>MediCare Reminder · manage schedules, prescriptions & records with ease.</p>
+          <div class="hero-buttons">
+            <button class="btn btn-primary" id="btn-hero-get-started"><i class="fas fa-rocket"></i> Get Started</button>
+            <button class="btn btn-outline" id="btn-hero-login"><i class="fas fa-sign-in-alt"></i> Demo Login</button>
+          </div>
+        </div>
+        <div class="hero-illustration">
+          <i class="fas fa-heartbeat"></i> <i class="fas fa-notes-medical"></i>
+        </div>
+      </div>
+
+      <!-- Features Quick Navigation -->
+      <div class="features">
+        <div class="feature-card" data-view="view-reminders">
+          <i class="fas fa-bell"></i>
+          <div class="feature-title">Reminders</div>
+        </div>
+        <div class="feature-card" data-view="view-records">
+          <i class="fas fa-tablets"></i>
+          <div class="feature-title">Records</div>
+        </div>
+        <div class="feature-card" data-view="view-prescriptions">
+          <i class="fas fa-prescription-bottle-alt"></i>
+          <div class="feature-title">Prescriptions</div>
+        </div>
+        <div class="feature-card" data-view="view-reports">
+          <i class="fas fa-chart-simple"></i>
+          <div class="feature-title">Dose Tracking</div>
+        </div>
+        <div class="feature-card" data-view="view-records">
+          <i class="fas fa-history"></i>
+          <div class="feature-title">Medical History</div>
+        </div>
+        <div class="feature-card" data-view="view-settings">
+          <i class="fas fa-envelope"></i>
+          <div class="feature-title">Notifications</div>
+        </div>
+      </div>
+
+      <!-- Greeting & Quick Add -->
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-wrap:wrap; gap:12px;">
+        <h2 id="dash-welcome-header" style="color: var(--primary-dark); font-weight:700;">👋 Welcome back, Sarah</h2>
+        <div>
+          <button class="btn btn-primary btn-open-add-med" style="padding: 10px 24px;"><i class="fas fa-plus"></i> Add Medicine</button>
+        </div>
+      </div>
+
+      <!-- Dashboard Stats Grid -->
+      <div class="dash-grid">
+        <div class="stat-card">
+          <div class="num" id="dash-stat-schedule">4</div>
+          <div class="label">Today's Schedule</div>
+        </div>
+        <div class="stat-card green">
+          <div class="num" id="dash-stat-taken">3</div>
+          <div class="label">Taken today</div>
+        </div>
+        <div class="stat-card red">
+          <div class="num" id="dash-stat-missed">1</div>
+          <div class="label">Missed doses</div>
+        </div>
+        <div class="stat-card green">
+          <div class="num" id="dash-stat-total-meds">4</div>
+          <div class="label">Total medicines</div>
+        </div>
+      </div>
+
+      <!-- Adherence Progress Card -->
+      <div class="card">
+        <div class="card-header">
+          <h3><i class="fas fa-chart-pie" style="color:var(--primary);"></i> Adherence Progress</h3>
+          <span id="dash-adherence-percent" style="font-size:1.2rem; font-weight:700; color:var(--primary-dark);">76%</span>
+        </div>
+        <div class="progress-bar-container">
+          <div class="progress-bar">
+            <div class="progress-fill" id="dash-adherence-bar" style="width: 76%;"></div>
+          </div>
+          <div class="adherence-meta">
+            <span id="dash-adherence-text">Good progress (3 of 4 doses completed)</span>
+            <span class="adherence-status-tag">Daily Goal: 100%</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Medicines Preview Table Card -->
+      <div class="card">
+        <div class="card-header">
+          <h3><i class="fas fa-tablets" style="color:var(--primary);"></i> My Medicines</h3>
+          <button class="btn btn-outline btn-sm btn-open-add-med"><i class="fas fa-plus-circle"></i> Add</button>
+        </div>
+        <div class="table-responsive">
+          <table>
+            <thead>
+              <tr>
+                <th>Name</th>
+                <th>Dosage</th>
+                <th>Frequency</th>
+                <th>Time</th>
+                <th>Status</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="dash-medicine-tbody">
+              <!-- Dynamically rendered -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Today's Reminders Preview Card -->
+      <div class="card">
+        <div class="card-header">
+          <h3><i class="fas fa-clock" style="color:var(--primary);"></i> Today's Reminders</h3>
+          <button class="btn btn-outline btn-sm" onclick="document.querySelector('.sidebar .nav-item[data-view=\'view-reminders\']').click();">
+            <i class="fas fa-list"></i> View All
+          </button>
+        </div>
+        <div class="reminders-list" id="dash-reminders-container">
+          <!-- Dynamically rendered -->
+        </div>
+      </div>
+
+      <!-- 2-Column Grid: Medical Records & Prescriptions Preview -->
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 24px;">
+        <!-- Medical Records Preview -->
+        <div class="card">
+          <div class="card-header">
+            <h3><i class="fas fa-folder" style="color:var(--primary);"></i> Medical Records</h3>
+            <div class="card-header-actions">
+              <button class="btn-icon" id="btn-open-add-record" title="Upload record"><i class="fas fa-upload"></i></button>
+            </div>
+          </div>
+          <div id="dash-records-preview">
+            <!-- Dynamically rendered -->
+          </div>
+          <div class="upload-area" id="record-drop-area" style="margin-top:16px;">
+            <i class="fas fa-cloud-upload-alt"></i>
+            <p id="record-upload-hint">Drag & drop or click to upload</p>
+            <span>PDF, PNG, JPG (Stored safely in LocalStorage)</span>
+            <input type="file" id="record-file-input" accept="image/*,application/pdf" style="display:none;" />
+          </div>
+        </div>
+
+        <!-- Prescriptions Preview -->
+        <div class="card">
+          <div class="card-header">
+            <h3><i class="fas fa-file-prescription" style="color:var(--primary);"></i> Prescriptions</h3>
+            <button class="btn-icon" id="btn-open-add-rx" title="Add prescription"><i class="fas fa-plus"></i></button>
+          </div>
+          <div id="dash-prescriptions-preview">
+            <!-- Dynamically rendered -->
+          </div>
+        </div>
+      </div>
+
+      <!-- Recent Activity Card -->
+      <div class="card" style="margin-top: 24px;">
+        <div class="card-header">
+          <h3><i class="fas fa-history" style="color:var(--primary);"></i> Recent Activity</h3>
+        </div>
+        <div class="activity-feed" id="dash-activity-container">
+          <!-- Dynamically populated -->
+        </div>
+      </div>
+    </section>
+
+    <!-- ========================================== -->
+    <!-- SECTION 2: MY MEDICINES                    -->
+    <!-- ========================================== -->
+    <section id="view-medicines" class="view-section">
+      <div class="card">
+        <div class="card-header">
+          <div>
+            <h3><i class="fas fa-capsules" style="color:var(--primary);"></i> Medicine Management</h3>
+            <p style="font-size:0.9rem; color:var(--gray-500); margin-top:4px;">Manage dosages, intake instructions, and active daily schedules</p>
+          </div>
+          <button class="btn btn-primary btn-open-add-med"><i class="fas fa-plus"></i> Add New Medicine</button>
+        </div>
+
+        <!-- Search & Filter Bar -->
+        <div class="search-filter-bar">
+          <div class="search-input-wrapper">
+            <i class="fas fa-search"></i>
+            <input type="text" id="med-search-input" placeholder="Search by medicine, dosage, or prescribing doctor..." aria-label="Search medicines" />
+          </div>
+        </div>
+
+        <!-- Full Medicine Table -->
+        <div class="table-responsive">
+          <table>
+            <thead>
+              <tr>
+                <th>Medicine Name</th>
+                <th>Dosage</th>
+                <th>Frequency</th>
+                <th>Reminder Times</th>
+                <th>Food Timing</th>
+                <th>Status</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="full-medicine-tbody">
+              <!-- Dynamically populated -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========================================== -->
+    <!-- SECTION 3: REMINDERS                       -->
+    <!-- ========================================== -->
+    <section id="view-reminders" class="view-section">
+      <div class="card">
+        <div class="card-header">
+          <div>
+            <h3><i class="fas fa-bell" style="color:var(--primary);"></i> Today's Medicine Reminders</h3>
+            <p style="font-size:0.9rem; color:var(--gray-500); margin-top:4px;">Real-time schedule tracking with automatic missed-dose alerts</p>
+          </div>
+        </div>
+
+        <!-- Filter Pills -->
+        <div class="search-filter-bar">
+          <div class="filter-pills">
+            <button class="filter-pill active" data-reminder-filter="all">All Today</button>
+            <button class="filter-pill" data-reminder-filter="upcoming">Upcoming</button>
+            <button class="filter-pill" data-reminder-filter="completed">Completed</button>
+            <button class="filter-pill" data-reminder-filter="missed">Missed</button>
+            <button class="filter-pill" data-reminder-filter="skipped">Skipped</button>
+          </div>
+        </div>
+
+        <!-- Reminders List -->
+        <div class="reminders-list" id="full-reminders-container">
+          <!-- Dynamically populated -->
+        </div>
+      </div>
+    </section>
+
+    <!-- ========================================== -->
+    <!-- SECTION 4: MEDICAL RECORDS                 -->
+    <!-- ========================================== -->
+    <section id="view-records" class="view-section">
+      <div class="card">
+        <div class="card-header">
+          <div>
+            <h3><i class="fas fa-notes-medical" style="color:var(--primary);"></i> Medical Records & Lab Reports</h3>
+            <p style="font-size:0.9rem; color:var(--gray-500); margin-top:4px;">Upload and view clinical documents, lab panels, and test summaries</p>
+          </div>
+          <button class="btn btn-primary" onclick="openModal('modal-record');"><i class="fas fa-upload"></i> Upload Record</button>
+        </div>
+
+        <div class="search-filter-bar">
+          <div class="search-input-wrapper">
+            <i class="fas fa-search"></i>
+            <input type="text" id="record-search-input" placeholder="Search records by title, type, or doctor..." aria-label="Search records" />
+          </div>
+        </div>
+
+        <div class="records-grid" id="full-records-container">
+          <!-- Dynamically populated -->
+        </div>
+      </div>
+    </section>
+
+    <!-- ========================================== -->
+    <!-- SECTION 5: PRESCRIPTIONS                   -->
+    <!-- ========================================== -->
+    <section id="view-prescriptions" class="view-section">
+      <div class="card">
+        <div class="card-header">
+          <div>
+            <h3><i class="fas fa-prescription" style="color:var(--primary);"></i> Doctor Prescriptions</h3>
+            <p style="font-size:0.9rem; color:var(--gray-500); margin-top:4px;">Track physician orders, courses, and expiration statuses</p>
+          </div>
+          <button class="btn btn-primary" onclick="openPrescriptionModal();"><i class="fas fa-plus"></i> Add Prescription</button>
+        </div>
+
+        <div id="full-prescriptions-container">
+          <!-- Dynamically populated -->
+        </div>
+      </div>
+    </section>
+
+    <!-- ========================================== -->
+    <!-- SECTION 6: REPORTS & ADHERENCE             -->
+    <!-- ========================================== -->
+    <section id="view-reports" class="view-section">
+      <div class="card">
+        <div class="card-header">
+          <div>
+            <h3><i class="fas fa-chart-line" style="color:var(--primary);"></i> Compliance & Adherence Reports</h3>
+            <p style="font-size:0.9rem; color:var(--gray-500); margin-top:4px;">Analytics and historical dose tracking</p>
+          </div>
+          <div class="filter-pills">
+            <button class="filter-pill active" data-report-range="7d">Last 7 Days</button>
+            <button class="filter-pill" data-report-range="30d">Last 30 Days</button>
+            <button class="filter-pill" data-report-range="today">Today</button>
+          </div>
+        </div>
+
+        <!-- KPI Metrics Grid -->
+        <div class="reports-kpi-grid">
+          <div class="kpi-card">
+            <div class="val" id="report-kpi-total-meds">4</div>
+            <div class="lbl">Active Medicines</div>
+          </div>
+          <div class="kpi-card">
+            <div class="val" id="report-kpi-total-doses">28</div>
+            <div class="lbl">Total Doses</div>
+          </div>
+          <div class="kpi-card">
+            <div class="val" id="report-kpi-taken" style="color:var(--secondary-dark);">24</div>
+            <div class="lbl">Taken Doses</div>
+          </div>
+          <div class="kpi-card">
+            <div class="val" id="report-kpi-missed" style="color:var(--danger);">3</div>
+            <div class="lbl">Missed Doses</div>
+          </div>
+          <div class="kpi-card">
+            <div class="val" id="report-kpi-skipped" style="color:var(--warning);">1</div>
+            <div class="lbl">Skipped Doses</div>
+          </div>
+          <div class="kpi-card">
+            <div class="val" id="report-kpi-rate" style="color:var(--primary);">86%</div>
+            <div class="lbl">Adherence Rate</div>
+          </div>
+        </div>
+
+        <!-- Dynamic Chart -->
+        <h4 style="margin: 20px 0 10px; color:var(--primary-dark);"><i class="fas fa-chart-bar"></i> Daily Adherence Rate (%)</h4>
+        <div class="chart-container" id="report-chart-container">
+          <!-- Dynamically populated bars -->
+        </div>
+      </div>
+    </section>
+
+    <!-- ========================================== -->
+    <!-- SECTION 7: PROFILE                         -->
+    <!-- ========================================== -->
+    <section id="view-profile" class="view-section">
+      <div class="card">
+        <div class="card-header">
+          <h3><i class="fas fa-user-circle" style="color:var(--primary);"></i> Patient Profile</h3>
+          <div class="card-header-actions">
+            <button class="btn btn-primary btn-sm" id="btn-open-edit-profile"><i class="fas fa-user-edit"></i> Edit Profile</button>
+            <button class="btn btn-outline btn-sm" id="btn-open-change-password"><i class="fas fa-key"></i> Change Password</button>
+          </div>
+        </div>
+
+        <div class="profile-row">
+          <div class="profile-avatar"><i class="fas fa-user-md"></i></div>
+          <div class="profile-details">
+            <h3 id="profile-display-name">Sarah Johnson</h3>
+            <p>
+              📧 <span id="profile-display-email">sarah.j@care.com</span><br/>
+              📅 DOB: <span id="profile-display-dob">15/07/1962</span> · 📞 <span id="profile-display-phone">+1 234 567 890</span><br/>
+              🆘 Emergency Contact: <strong id="profile-display-emergency">+1 987 654 321</strong>
+            </p>
+          </div>
+        </div>
+
+        <div class="profile-info-grid">
+          <div class="profile-info-box">
+            <div class="label">Primary Physician</div>
+            <div class="val">Dr. Elena Rivera (Cardiology)</div>
+          </div>
+          <div class="profile-info-box">
+            <div class="label">Blood Group</div>
+            <div class="val">O Positive (O+)</div>
+          </div>
+          <div class="profile-info-box">
+            <div class="label">Known Allergies</div>
+            <div class="val">Penicillin, Sulfa drugs</div>
+          </div>
+          <div class="profile-info-box">
+            <div class="label">Health Insurance</div>
+            <div class="val">CarePlus Gold #CP-884920</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========================================== -->
+    <!-- SECTION 8: SETTINGS                        -->
+    <!-- ========================================== -->
+    <section id="view-settings" class="view-section">
+      <div class="card">
+        <div class="card-header">
+          <h3><i class="fas fa-cog" style="color:var(--primary);"></i> Application Preferences</h3>
+        </div>
+
+        <div style="display: flex; flex-direction: column; gap: 24px; max-width: 600px;">
+          <!-- Notifications Toggle -->
+          <div style="display: flex; align-items: center; justify-content: space-between; padding: 12px 0; border-bottom: 1px solid #edf4f8;">
+            <div>
+              <strong style="display:block; font-size:1rem; color:var(--gray-900);"><i class="fas fa-bell" style="color:var(--primary); margin-right:8px;"></i> Browser Notifications</strong>
+              <span style="font-size:0.85rem; color:var(--gray-500);">Receive instant desktop reminders for upcoming doses</span>
+            </div>
+            <label style="display:flex; align-items:center; cursor:pointer;">
+              <input type="checkbox" id="settings-notifications-toggle" style="width:20px; height:20px; cursor:pointer;" checked />
+            </label>
+          </div>
+
+          <!-- Reminder Preference Dropdown -->
+          <div style="display: flex; align-items: center; justify-content: space-between; padding: 12px 0; border-bottom: 1px solid #edf4f8; flex-wrap:wrap; gap:12px;">
+            <div>
+              <strong style="display:block; font-size:1rem; color:var(--gray-900);"><i class="fas fa-clock" style="color:var(--primary); margin-right:8px;"></i> Reminder Preference</strong>
+              <span style="font-size:0.85rem; color:var(--gray-500);">Choose when to trigger alert notifications</span>
+            </div>
+            <select id="settings-reminder-offset" style="padding:10px 16px; border-radius:14px; border:1px solid #d3e2ec; background:#fafdff; font-weight:500;">
+              <option value="0">At reminder time</option>
+              <option value="5">5 min before</option>
+              <option value="15" selected>15 min before</option>
+              <option value="30">30 min before</option>
+            </select>
+          </div>
+
+          <!-- Data Reset and Storage info -->
+          <div style="padding: 16px; background:#f8fafc; border-radius:16px; border:1px solid #e2edf2;">
+            <strong style="color:var(--primary-dark);"><i class="fas fa-database"></i> Local Browser Storage Notice</strong>
+            <p style="font-size:0.85rem; color:var(--gray-500); margin: 6px 0 14px;">
+              MediCare operates 100% client-side. Your medical records, reminders, and profile data are stored directly inside your browser's LocalStorage and will persist across reloads.
+            </p>
+            <button class="btn btn-outline btn-sm" id="btn-reset-demo-data" style="color:var(--danger); border-color:var(--danger);">
+              <i class="fas fa-undo"></i> Reset Demo Data
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+</div>
+
+<!-- ========================================== -->
+<!-- MODALS                                     -->
+<!-- ========================================== -->
+
+<!-- 1. Add / Edit Medicine Modal -->
+<div id="modal-medicine" class="modal-overlay" aria-hidden="true" role="dialog">
+  <div class="modal-card">
+    <div class="modal-header">
+      <h3 id="med-modal-title"><i class="fas fa-capsules"></i> Add New Medicine</h3>
+      <button class="modal-close-btn" aria-label="Close modal">&times;</button>
+    </div>
+    <form id="form-medicine">
+      <div class="modal-body">
+        <div class="form-grid">
+          <div class="form-group">
+            <label for="med-name">Medicine Name <span class="required">*</span></label>
+            <input type="text" id="med-name" required placeholder="e.g. Amlodipine" />
+          </div>
+          <div class="form-group">
+            <label for="med-dosage">Dosage <span class="required">*</span></label>
+            <input type="text" id="med-dosage" required placeholder="e.g. 5mg" />
+          </div>
+          <div class="form-group">
+            <label for="med-frequency">Frequency <span class="required">*</span></label>
+            <select id="med-frequency">
+              <option value="Daily">Daily</option>
+              <option value="Twice">Twice daily</option>
+              <option value="Three times">Three times daily</option>
+              <option value="Weekly">Weekly</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="med-food">Intake Timing</label>
+            <select id="med-food">
+              <option value="After">After food</option>
+              <option value="Before">Before food</option>
+              <option value="With">With food</option>
+              <option value="Empty stomach">On empty stomach</option>
+            </select>
+          </div>
+          <div class="form-group full-width">
+            <label>Reminder Times <span class="required">*</span></label>
+            <div class="times-container" id="med-times-inputs-container">
+              <!-- Dynamically populated based on frequency -->
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="med-start-date">Start Date</label>
+            <input type="date" id="med-start-date" />
+          </div>
+          <div class="form-group">
+            <label for="med-end-date">End Date</label>
+            <input type="date" id="med-end-date" />
+          </div>
+          <div class="form-group full-width">
+            <label for="med-doctor">Prescribing Doctor</label>
+            <input type="text" id="med-doctor" placeholder="e.g. Dr. Rivera" />
+          </div>
+          <div class="form-group full-width">
+            <label for="med-notes">Special Instructions & Notes</label>
+            <textarea id="med-notes" rows="2" placeholder="e.g. Take with a full glass of water. Avoid grapefruits."></textarea>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-outline modal-close-btn-action" onclick="closeModal('modal-medicine');">Cancel</button>
+        <button type="submit" class="btn btn-success"><i class="fas fa-save"></i> Save Medicine</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- 2. Snooze Reminder Modal -->
+<div id="modal-snooze" class="modal-overlay" aria-hidden="true" role="dialog">
+  <div class="modal-card" style="max-width:440px;">
+    <div class="modal-header">
+      <h3><i class="fas fa-bed"></i> Snooze Reminder</h3>
+      <button class="modal-close-btn" aria-label="Close modal">&times;</button>
+    </div>
+    <div class="modal-body">
+      <p id="snooze-med-info" style="font-weight:600; color:var(--primary-dark); margin-bottom:16px;">Medicine details</p>
+      <p style="font-size:0.9rem; color:var(--gray-500); margin-bottom:20px;">Choose snooze duration to reschedule notification:</p>
+      <div style="display:grid; grid-template-columns: 1fr 1fr; gap:12px;">
+        <button class="btn btn-outline btn-snooze-duration" data-minutes="5"><i class="fas fa-clock"></i> 5 Minutes</button>
+        <button class="btn btn-outline btn-snooze-duration" data-minutes="10"><i class="fas fa-clock"></i> 10 Minutes</button>
+        <button class="btn btn-outline btn-snooze-duration" data-minutes="15"><i class="fas fa-clock"></i> 15 Minutes</button>
+        <button class="btn btn-outline btn-snooze-duration" data-minutes="30"><i class="fas fa-clock"></i> 30 Minutes</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- 3. Add Medical Record Modal -->
+<div id="modal-record" class="modal-overlay" aria-hidden="true" role="dialog">
+  <div class="modal-card">
+    <div class="modal-header">
+      <h3><i class="fas fa-file-medical"></i> Add Medical Record</h3>
+      <button class="modal-close-btn" aria-label="Close modal">&times;</button>
+    </div>
+    <form id="form-record">
+      <div class="modal-body">
+        <div class="form-grid">
+          <div class="form-group full-width">
+            <label for="record-name">Record Title <span class="required">*</span></label>
+            <input type="text" id="record-name" required placeholder="e.g. Lipid Profile Lab Test" />
+          </div>
+          <div class="form-group">
+            <label for="record-type">Document Type</label>
+            <select id="record-type">
+              <option value="Lab Report">Lab Report</option>
+              <option value="Prescription">Prescription</option>
+              <option value="Doctor Note">Doctor Note</option>
+              <option value="Vaccination">Vaccination</option>
+              <option value="Insurance">Insurance</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="record-date">Date</label>
+            <input type="date" id="record-date" />
+          </div>
+          <div class="form-group full-width">
+            <label for="record-doctor">Clinic / Doctor Name</label>
+            <input type="text" id="record-doctor" placeholder="e.g. Central Diagnostic Center" />
+          </div>
+          <div class="form-group full-width">
+            <label>Select Document File</label>
+            <input type="file" id="record-modal-file-input" accept="image/*,application/pdf" onchange="if(this.files[0]) handleRecordFileUpload(this.files[0]);" style="padding:8px;" />
+            <input type="hidden" id="record-file-data" />
+            <input type="hidden" id="record-file-name" />
+            <input type="hidden" id="record-file-size" />
+          </div>
+          <div class="form-group full-width">
+            <label for="record-notes">Summary Notes</label>
+            <textarea id="record-notes" rows="2" placeholder="e.g. HbA1c normal. Review in 3 months."></textarea>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-outline" onclick="closeModal('modal-record');">Cancel</button>
+        <button type="submit" class="btn btn-primary"><i class="fas fa-save"></i> Save Record</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- 4. View Document Modal -->
+<div id="modal-view-record" class="modal-overlay" aria-hidden="true" role="dialog">
+  <div class="modal-card" style="max-width:700px;">
+    <div class="modal-header">
+      <div>
+        <h3 id="view-record-title"><i class="fas fa-file-alt"></i> Document Preview</h3>
+        <span id="view-record-meta" style="font-size:0.85rem; color:var(--gray-500);">Document details</span>
+      </div>
+      <button class="modal-close-btn" aria-label="Close modal">&times;</button>
+    </div>
+    <div class="modal-body" id="view-record-content">
+      <!-- Image or PDF viewer rendered here -->
+    </div>
+  </div>
+</div>
+
+<!-- 5. Add / Edit Prescription Modal -->
+<div id="modal-prescription" class="modal-overlay" aria-hidden="true" role="dialog">
+  <div class="modal-card">
+    <div class="modal-header">
+      <h3 id="rx-modal-title"><i class="fas fa-prescription"></i> Add Prescription</h3>
+      <button class="modal-close-btn" aria-label="Close modal">&times;</button>
+    </div>
+    <form id="form-prescription">
+      <div class="modal-body">
+        <div class="form-grid">
+          <div class="form-group">
+            <label for="rx-doctor">Prescribing Doctor <span class="required">*</span></label>
+            <input type="text" id="rx-doctor" required placeholder="e.g. Dr. Rivera" />
+          </div>
+          <div class="form-group">
+            <label for="rx-date">Prescription Date <span class="required">*</span></label>
+            <input type="date" id="rx-date" required />
+          </div>
+          <div class="form-group full-width">
+            <label for="rx-medicines">Medicines Included <span class="required">*</span></label>
+            <input type="text" id="rx-medicines" required placeholder="e.g. Amlodipine 5mg, Lisinopril 10mg" />
+          </div>
+          <div class="form-group">
+            <label for="rx-status">Status</label>
+            <select id="rx-status">
+              <option value="Active">Active</option>
+              <option value="Expired">Expired</option>
+            </select>
+          </div>
+          <div class="form-group full-width">
+            <label for="rx-notes">Doctor's Notes</label>
+            <textarea id="rx-notes" rows="2" placeholder="e.g. Refills valid for 6 months."></textarea>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-outline" onclick="closeModal('modal-prescription');">Cancel</button>
+        <button type="submit" class="btn btn-success"><i class="fas fa-save"></i> Save Prescription</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- 6. Edit Profile Modal -->
+<div id="modal-edit-profile" class="modal-overlay" aria-hidden="true" role="dialog">
+  <div class="modal-card">
+    <div class="modal-header">
+      <h3><i class="fas fa-user-edit"></i> Edit Profile</h3>
+      <button class="modal-close-btn" aria-label="Close modal">&times;</button>
+    </div>
+    <form id="form-profile">
+      <div class="modal-body">
+        <div class="form-grid">
+          <div class="form-group full-width">
+            <label for="profile-edit-name">Full Name <span class="required">*</span></label>
+            <input type="text" id="profile-edit-name" required placeholder="e.g. Sarah Johnson" />
+          </div>
+          <div class="form-group">
+            <label for="profile-edit-email">Email</label>
+            <input type="email" id="profile-edit-email" placeholder="sarah.j@care.com" />
+          </div>
+          <div class="form-group">
+            <label for="profile-edit-dob">Date of Birth</label>
+            <input type="date" id="profile-edit-dob" />
+          </div>
+          <div class="form-group">
+            <label for="profile-edit-phone">Phone Number</label>
+            <input type="tel" id="profile-edit-phone" placeholder="+1 234 567 890" />
+          </div>
+          <div class="form-group">
+            <label for="profile-edit-emergency">Emergency Contact</label>
+            <input type="tel" id="profile-edit-emergency" placeholder="+1 987 654 321" />
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-outline" onclick="closeModal('modal-edit-profile');">Cancel</button>
+        <button type="submit" class="btn btn-primary"><i class="fas fa-save"></i> Update Profile</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- 7. Change Password Modal -->
+<div id="modal-password" class="modal-overlay" aria-hidden="true" role="dialog">
+  <div class="modal-card" style="max-width:440px;">
+    <div class="modal-header">
+      <h3><i class="fas fa-key"></i> Change Password</h3>
+      <button class="modal-close-btn" aria-label="Close modal">&times;</button>
+    </div>
+    <form id="form-password">
+      <div class="modal-body">
+        <div style="background:#fff3cd; color:#856404; padding:10px 14px; border-radius:12px; font-size:0.85rem; margin-bottom:16px;">
+          <i class="fas fa-info-circle"></i> <strong>Frontend Demo Notice:</strong> Authentication is simulated client-side.
+        </div>
+        <div class="form-group" style="margin-bottom:12px;">
+          <label for="pass-current">Current Password</label>
+          <input type="password" id="pass-current" placeholder="Enter current password" />
+        </div>
+        <div class="form-group" style="margin-bottom:12px;">
+          <label for="pass-new">New Password</label>
+          <input type="password" id="pass-new" required placeholder="Minimum 4 characters" />
+        </div>
+        <div class="form-group">
+          <label for="pass-confirm">Confirm New Password</label>
+          <input type="password" id="pass-confirm" required placeholder="Confirm new password" />
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-outline" onclick="closeModal('modal-password');">Cancel</button>
+        <button type="submit" class="btn btn-primary">Update Password</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- 8. Demo Login Modal -->
+<div id="modal-login" class="modal-overlay" aria-hidden="true" role="dialog">
+  <div class="modal-card" style="max-width:420px;">
+    <div class="modal-header">
+      <h3><i class="fas fa-sign-in-alt"></i> MediCare Login</h3>
+      <button class="modal-close-btn" aria-label="Close modal">&times;</button>
+    </div>
+    <form id="form-login">
+      <div class="modal-body">
+        <p style="font-size:0.9rem; color:var(--gray-500); margin-bottom:16px;">Sign in to access your medicine schedule and medical records.</p>
+        <div class="form-group" style="margin-bottom:14px;">
+          <label for="login-email">Email Address</label>
+          <input type="email" id="login-email" value="sarah.j@care.com" required placeholder="name@domain.com" />
+        </div>
+        <div class="form-group">
+          <label for="login-pass">Password</label>
+          <input type="password" id="login-pass" value="password123" required />
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-outline" onclick="closeModal('modal-login');">Cancel</button>
+        <button type="submit" class="btn btn-primary"><i class="fas fa-sign-in-alt"></i> Sign In</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Toast Container -->
+<div id="toast-container" class="toast-container"></div>
+
+<!-- JavaScript Application Script -->
+<script src="script.js"></script>
+</body>
+</html>
